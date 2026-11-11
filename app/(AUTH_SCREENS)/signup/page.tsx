@@ -1,11 +1,18 @@
-import React from 'react'
+"use client";
+import React, { useState } from "react";
+import OtpStep from "./components/OtpStep";
+import SignupForm from "./components/SignupForm";
+import SuccessStep from "./components/SuccessStep";
 
 const Page = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  const [step, setStep] = useState<"form" | "otp" | "success">("form");
+  return step == "form" ? (
+    <SignupForm onSubmit={() => setStep("otp")} />
+  ) : step == "otp" ? (
+    <OtpStep onVerify={() => setStep("success")} />
+  ) : (
+    <SuccessStep />
+  );
+};
 
-export default Page
+export default Page;

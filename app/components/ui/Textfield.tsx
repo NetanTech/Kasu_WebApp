@@ -1,3 +1,4 @@
+"use client";
 import {
   forwardRef,
   useId,
@@ -20,6 +21,7 @@ export interface TextFieldProps
   /** Linked to the input through `id`, so clicking it focuses the field. */
   label?: string;
   labelLink?: TextFieldLabelLink;
+  labelLinkClassname?: string;
   leadingIcon?: ReactNode;
   trailingIcon?: ReactNode;
   /** Text shown inside the field after the input, e.g. "cm". */
@@ -57,6 +59,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       type = "text",
       label,
       labelLink,
+      labelLinkClassname,
       leadingIcon,
       trailingIcon,
       suffix,
@@ -116,7 +119,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             )}
             {labelLink &&
               (labelLink.href ? (
-                <a href={labelLink.href} onClick={labelLink.onClick} className={LINK_TEXT}>
+                <a href={labelLink.href} onClick={labelLink.onClick} className={!labelLinkClassname ? LINK_TEXT : labelLinkClassname}>
                   {labelLink.text}
                 </a>
               ) : (

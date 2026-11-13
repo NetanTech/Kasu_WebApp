@@ -14,6 +14,17 @@ import {
   type ReactNode,
 } from "react";
 
+import {
+  DROPDOWN_LIST,
+  DROPDOWN_PANEL,
+  DROPDOWN_ROW_ACTIVE_BG,
+  DROPDOWN_ROW_ACTIVE_TEXT,
+  DROPDOWN_ROW_DISABLED,
+  DROPDOWN_ROW_IDLE_TEXT,
+  DROPDOWN_ROW_TEXT,
+  DROPDOWN_SCROLLBAR,
+} from "./dropdownStyles";
+
 export interface SelectOption {
   value: string;
   label: string;
@@ -88,13 +99,6 @@ const LINK_TEXT =
 
 const ERROR_TEXT =
   "text-xs leading-4 md:text-sm md:leading-5 tracking-[-0.02em] text-error-500";
-
-const ROW_TEXT = "text-sm leading-5 md:text-base md:leading-6 font-medium tracking-[-0.02em]";
-
-const SCROLLBAR =
-  "[scrollbar-width:thin] [scrollbar-color:var(--color-blue-500)_#F0F1F3] " +
-  "[&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-[#F0F1F3] " +
-  "[&::-webkit-scrollbar-thumb]:bg-blue-500";
 
 export const Select = forwardRef<HTMLInputElement, SelectProps>((props, ref) => {
   const {
@@ -422,7 +426,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>((props, ref) => 
         </div>
 
         {open && (
-          <div className="absolute left-0 top-full z-50 mt-1 w-full overflow-hidden rounded-lg border border-[#E0E2E7] bg-white shadow-[0_4px_30px_0_rgba(46,45,116,0.10)]">
+          <div className={DROPDOWN_PANEL}>
             <ul
               ref={listRef}
               id={listboxId}
@@ -431,19 +435,27 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>((props, ref) => 
               aria-multiselectable={multiple || undefined}
               aria-busy={isLoading || undefined}
               onFocus={() => inputRef.current?.focus()}
-              className={cn("max-h-60 overflow-y-auto py-2 outline-none", SCROLLBAR)}
+              className={cn(DROPDOWN_LIST, DROPDOWN_SCROLLBAR)}
             >
               {isLoading ? (
                 <li
                   role="presentation"
-                  className={cn("animate-pulse px-3.5 py-3 text-[#858D9D]", ROW_TEXT)}
+                  className={cn(
+                    "animate-pulse px-3.5 py-3",
+                    DROPDOWN_ROW_TEXT,
+                    DROPDOWN_ROW_IDLE_TEXT,
+                  )}
                 >
                   {loadingText}
                 </li>
               ) : filtered.length === 0 ? (
                 <li
                   role="presentation"
-                  className={cn("px-3.5 py-3 text-[#858D9D]", ROW_TEXT)}
+                  className={cn(
+                    "px-3.5 py-3",
+                    DROPDOWN_ROW_TEXT,
+                    DROPDOWN_ROW_IDLE_TEXT,
+                  )}
                 >
                   {emptyText}
                 </li>
@@ -465,14 +477,16 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>((props, ref) => 
                       onClick={() => choose(opt)}
                       className={cn(
                         "flex items-start gap-2 px-3.5 py-3",
-                        ROW_TEXT,
+                        DROPDOWN_ROW_TEXT,
                         disabled
-                          ? "cursor-not-allowed text-grey-100"
+                          ? DROPDOWN_ROW_DISABLED
                           : cn(
                               "cursor-pointer",
-                              isSelected || highlighted ? "text-blue-500" : "text-[#858D9D]",
+                              isSelected || highlighted
+                                ? DROPDOWN_ROW_ACTIVE_TEXT
+                                : DROPDOWN_ROW_IDLE_TEXT,
                             ),
-                        highlighted && "bg-[#EFEFFD]",
+                        highlighted && DROPDOWN_ROW_ACTIVE_BG,
                       )}
                     >
                       <span className="flex-1">{opt.label}</span>

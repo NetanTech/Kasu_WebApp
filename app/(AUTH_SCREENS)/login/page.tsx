@@ -1,62 +1,153 @@
 "use client";
-import { Eye, EyeSlash, Google } from "@/app/components/svgs/svg";
+import {
+  authContainer,
+  authFade,
+  authItem,
+  authLine,
+} from "@/app/components/animations/auth";
+import { ArrowRight, Eye, Google } from "@/app/components/svgs/svg";
 import Button from "@/app/components/ui/Button";
+import Button2Icons from "@/app/components/ui/Button2Icons";
+import EmailField from "@/app/components/ui/EmailField";
 import TextField from "@/app/components/ui/Textfield";
+import { loginSchema, LoginValues } from "@/app/lib/utils/zodAuthSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "motion/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React from "react";
+import { Controller, useForm } from "react-hook-form";
 
 const Page = () => {
-  const router = useRouter();
-  
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    mode: "onTouched",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = () => {};
+
+  const { submitCount, isSubmitting, errors } = form.formState;
   return (
-    <div className="flex flex-col gap-6">
+    <motion.div
+      variants={authContainer}
+      initial="hidden"
+      animate="visible"
+      className="flex flex-col gap-6"
+    >
       {/* Header */}
-      <div className="flex flex-col gap-2 items-center justify-center text-center">
-        <h3 className="font-semibold text-[#0D0D0D]">Sign In</h3>
-        <p className="text-grey-300 body-medium-regular">
+      <motion.div
+        variants={authContainer}
+        className="flex flex-col gap-2 items-center justify-center text-center"
+      >
+        <motion.h1 variants={authItem} className="auth-title text-[#0D0D0D]">
+          Sign In
+        </motion.h1>
+        <motion.p
+          variants={authItem}
+          className="text-grey-300 body-medium-regular"
+        >
           Welcome back to Kasu
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
       {/* Bottom part */}
-      <div className="flex flex-col gap-6">
+      <motion.div variants={authContainer} className="flex flex-col gap-6">
         {/* Form */}
-        <form className="flex flex-col gap-8">
-          <div className="flex flex-col gap-6">
-            <TextField label="Email" placeholder="Enter your email" />
-            <TextField
-              label="Password"
-              placeholder="Password"
-              type="password"
-              passwordHiddenIcon={<EyeSlash className="text-grey-200" />}
-              passwordVisibleIcon={<Eye className="text-grey-200" />}
-              labelLink={{
-                text: "forgot password",
-                href: "/forgot-password",
-                onClick: () => router.push("/forgot-password"),
-              }}
-              labelLinkClassname="text-[#B0B0B0] text-[16px] capitalize tracking-[-1%] leading-[24px] hover:underline transition-all"
-            />
-          </div>
+        <motion.form
+          variants={authContainer}
+          className="flex flex-col gap-8"
+          onSubmit={form.handleSubmit(onSubmit)}
+          noValidate
+        >
+          <motion.div variants={authContainer} className="flex flex-col gap-6">
+            <motion.div variants={authItem}>
+              <Controller
+                control={form.control}
+                name="email"
+                render={({ field, fieldState }) => (
+                  <EmailField
+                    label="Email"
+                    placeholder="Enter your email"
+                    { ...field }
+                    error={ fieldState.error?.message }
+                    autoComplete="email"
+                    shakeKey={submitCount}
+                  />
+                )}
+              />
+            </motion.div>
+            <motion.div variants={authItem}>
+              <TextField
+                label="Password"
+                placeholder="Password"
+                type="password"
+                { ...form.register('password') }
+                error={errors.password?.message}
+                shakeKey={ submitCount }
+                passwordIcon={Eye}
+                autoComplete="current-password"
+                labelLink={{
+                  text: "forgot password",
+                  href: "/forgot-password",
+                }}
+                labelLinkClassname="text-[#B0B0B0] text-[16px] capitalize tracking-[-1%] leading-[24px] hover:underline transition-all"
+              />
+            </motion.div>
+          </motion.div>
 
-          <Button size="lg" variant="primary" className="w-full">
-            Get Started
-          </Button>
-        </form>
+          <motion.div variants={authItem}>
+            <Button
+            type="submit"
+              size="lg"
+              variant="primary"
+              className="w-full"
+              disabled={ isSubmitting }
+            >
+              Get Started
+            </Button>
+          </motion.div>
+        </motion.form>
 
-        <div className="flex h-6 w-full items-center justify-center gap-4">
-          <span className="h-0 min-w-0 flex-1 border-t border-grey-100" />
-          <span className="shrink-0 text-sm text-grey-400">Or log in with</span>
-          <span className="h-0 min-w-0 flex-1 border-t border-grey-100" />
-        </div>
+        <motion.div
+          variants={authContainer}
+          className="flex h-6 w-full items-center justify-center gap-4"
+        >
+          <motion.span
+            variants={authLine}
+            style={{ originX: 1 }}
+            className="h-0 min-w-0 flex-1 border-t border-grey-100"
+          />
+          <motion.span
+            variants={authFade}
+            className="shrink-0 text-sm text-grey-400"
+          >
+            Or log in with
+          </motion.span>
+          <motion.span
+            variants={authLine}
+            style={{ originX: 0 }}
+            className="h-0 min-w-0 flex-1 border-t border-grey-100"
+          />
+        </motion.div>
 
-        <button className="flex items-center gap-2 border border-[#e7e7e7] rounded-xl justify-center hover:bg-grey-50/50 transition-all ease-in-out body-small-medium text-black w-full py-2 px-3">
-          <Google className="w-4 h-4" />
-          Continue with Google
-        </button>
+        <motion.div variants={authItem} className="w-full">
+          <Button2Icons
+            size="sm"
+            variant="social"
+            className="w-full rounded-xl hover:bg-transparent"
+            leftIcon={<Google className="h-4 w-4" />}
+            rightIcon={<ArrowRight className="h-4 w-4 text-grey-300" />}
+          >
+            <p className="body-small-medium">Continue with Google</p>
+          </Button2Icons>
+        </motion.div>
 
-        <p className="text-center body-medium-regular text-black">
+        <motion.p
+          variants={authFade}
+          className="text-center body-medium-regular text-black"
+        >
           Don&apos;t have an account?{" "}
           <Link
             href="/signup"
@@ -64,10 +155,10 @@ const Page = () => {
           >
             Sign Up
           </Link>
-        </p>
-      </div>
-    </div>
-  )
+        </motion.p>
+      </motion.div>
+    </motion.div>
+  );
 };
 
 export default Page;

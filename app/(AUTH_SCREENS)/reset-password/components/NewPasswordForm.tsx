@@ -1,59 +1,108 @@
 "use client";
-import { Eye, EyeSlash } from "@/app/components/svgs/svg";
+import {
+  authContainer,
+  authExit,
+  authItem,
+} from "@/app/components/animations/auth";
+import PasswordField from "@/app/components/shared/PasswordField";
+import { Eye } from "@/app/components/svgs/svg";
 import Button from "@/app/components/ui/Button";
 import TextField from "@/app/components/ui/Textfield";
+import { resetSchema, ResetValues } from "@/app/lib/utils/zodAuthSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "motion/react";
+import { useForm, useWatch } from "react-hook-form";
 
 export interface NewPasswordFormProps {
   onPasswordSet: () => void;
 }
 
 const NewPasswordForm = ({ onPasswordSet }: NewPasswordFormProps) => {
+  const form = useForm<ResetValues>({
+    resolver: zodResolver(resetSchema),
+    mode: "onTouched",
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const { isSubmitting, errors, submitCount } = form.formState;
+  const password = useWatch({ control: form.control, name: "password" }) ?? "";
+
   return (
-    <div className="flex flex-col gap-6">
+    <motion.div
+      variants={authContainer}
+      initial="hidden"
+      animate="visible"
+      exit={authExit}
+      className="flex flex-col gap-6"
+    >
       {/* Header */}
-      <div className="flex flex-col gap-2 items-center justify-center text-center">
-        <h3 className="font-semibold text-[#0D0D0D]">Set New Password</h3>
-        <p className="text-grey-300 body-medium-regular">
+      <motion.div
+        variants={authContainer}
+        className="flex flex-col gap-2 items-center justify-center text-center"
+      >
+        <motion.h1 variants={authItem} className="auth-title text-[#0D0D0D]">
+          Set New Password
+        </motion.h1>
+        <motion.p
+          variants={authItem}
+          className="text-grey-300 body-medium-regular"
+        >
           Choose a strong password you haven&apos;t used before.
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
       {/* Bottom part */}
-      <div className="flex flex-col gap-6">
+      <motion.div variants={authContainer} className="flex flex-col gap-6">
         {/* Form */}
-        <form className="flex flex-col gap-8">
-          <div className="flex flex-col gap-6">
-            <TextField
-              label="Password"
-              placeholder="Password"
-              type="password"
-              passwordHiddenIcon={<EyeSlash className="text-grey-200" />}
-              passwordVisibleIcon={<Eye className="text-grey-200" />}
-            />
-            <TextField
-              label="Confirm Password"
-              placeholder="Re-enter new password"
-              type="password"
-              passwordHiddenIcon={<EyeSlash className="text-grey-200" />}
-              passwordVisibleIcon={<Eye className="text-grey-200" />}
-            />
-          </div>
+        <motion.form
+          variants={authContainer}
+          onSubmit={form.handleSubmit(onPasswordSet)}
+          className="flex flex-col gap-8"
+          noValidate
+        >
+          <motion.div variants={authContainer} className="flex flex-col gap-6">
+            <motion.div variants={authItem}>
+              <PasswordField
+                value={password}
+                error={errors.password?.message}
+                registration={form.register("password")}
+                shakeKey={submitCount}
+                label="Password"
+                placeholder="Password"
+                autoComplete="new-password"
+              />
+            </motion.div>
+            <motion.div variants={authItem}>
+              <TextField
+                label="Confirm Password"
+                placeholder="Re-enter new password"
+                type="password"
+                {...form.register("confirmPassword")}
+                error={errors.confirmPassword?.message}
+                passwordIcon={Eye}
+                autoComplete="new-password"
+                shakeKey={submitCount}
+              />
+            </motion.div>
+          </motion.div>
 
-          <p className="body-small-regular text-grey-300 text-center">
-            Use at least 8 characters, one uppercase, one number, and one symbol
-          </p>
-
-          <Button
-            size="lg"
-            variant="primary"
-            className="w-full"
-            onClick={onPasswordSet}
-          >
-            Reset Password
-          </Button>
-        </form>
-      </div>
-    </div>
+          <motion.div variants={authItem}>
+            <Button
+            type="submit"
+              size="lg"
+              variant="primary"
+              className="w-full"
+              isDisabled={ isSubmitting }
+            >
+              Reset Password
+            </Button>
+          </motion.div>
+        </motion.form>
+      </motion.div>
+    </motion.div>
   );
 };
 

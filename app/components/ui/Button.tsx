@@ -7,7 +7,7 @@ import {
 } from "react";
 
 export type ButtonSize = "sm" | "lg";
-export type ButtonVariant = "primary" | "secondary";
+export type ButtonVariant = "primary" | "secondary" | "social";
 
 export interface ButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
@@ -75,6 +75,14 @@ const VARIANTS = {
     "enabled:focus-visible:bg-blue-50 enabled:focus-visible:border-blue-700 enabled:focus-visible:text-blue-700",
     "disabled:bg-white disabled:border-[#F0F2F5] disabled:text-[#98A2B3]",
   ].join(" "),
+
+  social: [
+    'bg-transparent text-black  body-small-medium border border-grey-50',
+    'enabled:hover:bg-grey-50/50 enabled:hover:border-grey-50 enabled:hover:text-black',
+    'enabled:active:bg-grey-50/50 enabled:active:border-grey-50 enabled:active:text-black',
+    'enabled:focus-visible:bg-grey-50/50 enabled:focus-visible:border-grey-300 enabled:focus-visible:text-black',
+    'disabled:bg-transparent disabled:border-[#F0F2F5] disabled:text-[#98A2B3]',
+  ].join(" "),
 } as const;
 
 
@@ -133,6 +141,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={onClick}
         disabled={isDisabled || disabled}
         className={cn(
+          className,
           BASE,
           s.text,
           s.gap,
@@ -141,7 +150,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           variant === "secondary" && s.border,
           variant === "secondary" && size === "lg" && LG_SECONDARY_BORDER_BOOST,
           fullWidth && "w-full",
-          className,
         )}
         {...rest}
       >

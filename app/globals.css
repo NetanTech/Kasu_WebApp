@@ -151,6 +151,21 @@ body {
     }
   }
 
+  /* Auth screen titles: semantic h1 with the compact visual scale. */
+  .auth-title {
+    @apply text-[24px] leading-[32px] tracking-[-2%] font-semibold;
+  }
+  @media (min-width: 768px) {
+    .auth-title {
+      @apply text-[28px] leading-[36px];
+    }
+  }
+  @media (min-width: 1024px) {
+    .auth-title {
+      @apply text-[32px] leading-[40px];
+    }
+  }
+
   /* Paragraphs - Body text */
   .body-large-bold {
     @apply text-lg font-bold tracking-[-1%];

@@ -1,12 +1,12 @@
 "use client";
 
-import { Tick } from "@/app/components/svgs/svg";
 import { useIsomorphicLayoutEffect } from "@/app/lib/hooks/useIsomorphicLayoutEffect";
 import type { OnboardingValues } from "@/app/lib/utils/zodOnboardingSchema";
 import { useRef, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { cn, FOCUS_RING } from "../utils";
 import FieldError from "./FieldError";
+import SelectionTick from "./SelectionTick";
 
 const SEPARATE_MONEY_OPTIONS = [
   { label: "Yes", value: "yes" },
@@ -136,7 +136,7 @@ const SeparateMoneyControl = ({
                   aria-hidden="true"
                   className="hidden w-[11px] justify-center sm:flex"
                 >
-                  {selected && <Tick />}
+                  {selected && <SelectionTick />}
                 </span>
                 {option.label}
               </button>
@@ -145,7 +145,9 @@ const SeparateMoneyControl = ({
         </div>
       </div>
 
-      {error && <FieldError id={errorId}>{error}</FieldError>}
+      <FieldError id={errorId} show={Boolean(error)}>
+        {error}
+      </FieldError>
     </div>
   );
 };

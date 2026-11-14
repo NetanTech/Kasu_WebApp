@@ -8,12 +8,12 @@ import {
   Recorder,
   Restart,
   Sheet,
-  Tick,
 } from "@/app/components/svgs/svg";
 import type { OnboardingValues } from "@/app/lib/utils/zodOnboardingSchema";
 import { Controller, useFormContext } from "react-hook-form";
 import { cn, FOCUS_RING } from "../utils";
 import FieldError from "./FieldError";
+import SelectionTick from "./SelectionTick";
 import SeparateMoneyField from "./SeparateMoneyField";
 
 const NO_RECORDS_METHOD = "I don't keep records yet";
@@ -142,20 +142,20 @@ const SecondStep = () => {
                           selected ? "bg-blue-500" : "bg-[#007AFF26]",
                         )}
                       >
-                        {selected && <Tick />}
+                        {selected && <SelectionTick />}
                       </div>
                     </button>
                   );
                 })}
               </div>
 
-              {fieldState.error && (
-                <div className="mt-2">
-                  <FieldError id={errorId}>
-                    {fieldState.error.message}
-                  </FieldError>
-                </div>
-              )}
+              <FieldError
+                id={errorId}
+                show={Boolean(fieldState.error)}
+                className="mt-2"
+              >
+                {fieldState.error?.message}
+              </FieldError>
             </fieldset>
           );
         }}

@@ -50,7 +50,7 @@ const StepHeader = ({ step, headingRef }: StepHeaderProps) => {
           className="relative h-1.5 w-full overflow-hidden rounded-full bg-blue-100"
         >
           <div
-            className="h-full rounded-full transition-all bg-blue-500"
+            className="h-full rounded-full bg-blue-500 transition-[width] duration-300 ease-out motion-reduce:transition-none"
             style={{ width: `${(step / STEPS.length) * 100}%` }}
           />
         </div>

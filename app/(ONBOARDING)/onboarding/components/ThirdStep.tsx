@@ -5,12 +5,13 @@ import {
   Message,
   Recorder,
   Sheet,
-  Tick,
 } from "@/app/components/svgs/svg";
 import type { OnboardingValues } from "@/app/lib/utils/zodOnboardingSchema";
+import { motion } from "motion/react";
 import { Controller, useFormContext } from "react-hook-form";
 import { cn, FOCUS_RING } from "../utils";
 import FieldError from "./FieldError";
+import SelectionTick from "./SelectionTick";
 
 const PREFERENCES = [
   {
@@ -101,10 +102,15 @@ const ThirdStep = () => {
                         </div>
 
                         {selected && (
-                          <div className="flex items-center gap-1 rounded-full bg-blue-500 px-4 py-0.5 text-[12px] leading-4 tracking-[0.4px] text-white">
-                            <Tick />
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.94, y: 2 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ duration: 0.18, ease: "easeOut" }}
+                            className="flex items-center gap-1 rounded-full bg-blue-500 px-4 py-0.5 text-[12px] leading-4 tracking-[0.4px] text-white"
+                          >
+                            <SelectionTick />
                             Selected
-                          </div>
+                          </motion.div>
                         )}
                       </div>
 
@@ -123,13 +129,13 @@ const ThirdStep = () => {
                 })}
               </div>
 
-              {fieldState.error && (
-                <div className="mt-2">
-                  <FieldError id={errorId}>
-                    {fieldState.error.message}
-                  </FieldError>
-                </div>
-              )}
+              <FieldError
+                id={errorId}
+                show={Boolean(fieldState.error)}
+                className="mt-2"
+              >
+                {fieldState.error?.message}
+              </FieldError>
             </fieldset>
           );
         }}

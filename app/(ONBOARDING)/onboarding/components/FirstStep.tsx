@@ -1,12 +1,13 @@
 "use client";
 
-import { Lock, Tick } from "@/app/components/svgs/svg";
+import { Lock } from "@/app/components/svgs/svg";
 import TextField from "@/app/components/ui/Textfield";
 import type { OnboardingValues } from "@/app/lib/utils/zodOnboardingSchema";
+import { motion } from "motion/react";
 import { Controller, useFormContext } from "react-hook-form";
 import { cn, FOCUS_RING, toggleValue } from "../utils";
-import { motion } from "motion/react";
 import FieldError from "./FieldError";
+import SelectionTick from "./SelectionTick";
 
 const BUSINESS_TYPES = [
   "Shop or retail",
@@ -118,17 +119,7 @@ const FirstStep = ({ shakeKey }: FirstStepProps) => {
                         }}
                         className="absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500"
                       />
-                      {selected && (
-                        <motion.span
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          exit={{ scale: 0 }}
-                          aria-hidden="true"
-                          className="flex w-2.75 justify-center"
-                        >
-                          <Tick />
-                        </motion.span>
-                      )}
+                      {selected && <SelectionTick className="w-2.75" />}
 
                       {businessType}
                     </motion.button>
@@ -136,13 +127,13 @@ const FirstStep = ({ shakeKey }: FirstStepProps) => {
                 })}
               </div>
 
-              {fieldState.error && (
-                <div className="mt-2">
-                  <FieldError id={errorId}>
-                    {fieldState.error.message}
-                  </FieldError>
-                </div>
-              )}
+              <FieldError
+                id={errorId}
+                show={Boolean(fieldState.error)}
+                className="mt-2"
+              >
+                {fieldState.error?.message}
+              </FieldError>
             </fieldset>
           );
         }}
@@ -215,7 +206,7 @@ const FirstStep = ({ shakeKey }: FirstStepProps) => {
                           aria-hidden="true"
                           className="flex w-[11px] justify-center"
                         >
-                          {selected && <Tick />}
+                          {selected && <SelectionTick />}
                         </span>
                         {teamSize}
                       </span>
@@ -234,13 +225,13 @@ const FirstStep = ({ shakeKey }: FirstStepProps) => {
                 })}
               </div>
 
-              {fieldState.error && (
-                <div className="mt-2">
-                  <FieldError id={errorId}>
-                    {fieldState.error.message}
-                  </FieldError>
-                </div>
-              )}
+              <FieldError
+                id={errorId}
+                show={Boolean(fieldState.error)}
+                className="mt-2"
+              >
+                {fieldState.error?.message}
+              </FieldError>
             </fieldset>
           );
         }}

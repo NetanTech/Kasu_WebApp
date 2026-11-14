@@ -1,10 +1,16 @@
-import React from "react";
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+export const metadata: Metadata = {
+  title: "Onboarding",
+  description: "Set up your business on Kasu.",
+};
+
+const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex min-h-dvh flex-1 items-center justify-center bg-blue-50 px-4 py-8 sm:px-6">
-      <div className="layout-shell min-h-[min(43.75rem,85dvh)] w-full overflow-hidden rounded-[20px] lg:py-24.5 lg:px-21.25 py-10 px-4 md:px-8 bg-white">
-        { children }
+    <div className="flex min-h-dvh items-center justify-center bg-blue-50 px-4 py-8 sm:px-6">
+      <div className="layout-shell flex h-[min(43.75rem,85dvh)] w-full flex-col overflow-hidden rounded-[20px] bg-white">
+        {children}
       </div>
     </div>
   );

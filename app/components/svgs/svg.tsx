@@ -179,6 +179,28 @@ export function ArrowRight({
   );
 }
 
+export function Tick({
+  className,
+  ...props
+}: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      width="11"
+      height="9"
+      viewBox="0 0 11 9"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...props}
+    >
+      <path
+        d="M3.8 8.01667L0 4.21667L0.95 3.26667L3.8 6.11667L9.91667 0L10.8667 0.95L3.8 8.01667V8.01667"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
 export function Lock({
   className,
   ...props
@@ -249,21 +271,23 @@ export function ArrowRight2({
       viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...props}
     >
       <path
         d="M12.0254 4.94168L17.0837 10L12.0254 15.0583"
-        stroke-width="1.25"
-        stroke-miterlimit="10"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.25"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke="currentColor"
       />
       <path
         d="M2.91699 10H16.942"
-        stroke-width="1.25"
-        stroke-miterlimit="10"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.25"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke="currentColor"
       />
     </svg>
@@ -420,12 +444,37 @@ export function Receipt({
   );
 }
 
+export function Camera({
+  className,
+  ...props
+}: {
+  className?: string;
+  props?: React.SVGProps<SVGSVGElement>;
+}) {
+  return (
+    <svg
+      width="14"
+      height="13"
+      viewBox="0 0 14 13"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...props}
+    >
+      <path
+        d="M6.98476 10.0623C7.83841 10.0623 8.56475 9.76356 9.16379 9.166C9.76282 8.56845 10.0623 7.84284 10.0623 6.98919C10.0623 6.13554 9.76356 5.40919 9.166 4.81016C8.56845 4.21112 7.84284 3.91161 6.98919 3.91161C6.13554 3.91161 5.40919 4.21039 4.81016 4.80794C4.21112 5.4055 3.91161 6.1311 3.91161 6.98476C3.91161 7.83841 4.21039 8.56475 4.80794 9.16379C5.4055 9.76282 6.1311 10.0623 6.98476 10.0623V10.0623M6.98697 8.48407C6.56427 8.48407 6.20908 8.34023 5.9214 8.05255C5.63372 7.76487 5.48988 7.40968 5.48988 6.98697C5.48988 6.56427 5.63372 6.20908 5.9214 5.9214C6.20908 5.63372 6.56427 5.48988 6.98697 5.48988C7.40968 5.48988 7.76487 5.63372 8.05255 5.9214C8.34023 6.20908 8.48407 6.56427 8.48407 6.98697C8.48407 7.40968 8.34023 7.76487 8.05255 8.05255C7.76487 8.34023 7.40968 8.48407 6.98697 8.48407V8.48407M1.76669 12.6406C1.27441 12.6406 0.856895 12.4692 0.514137 12.1265C0.171379 11.7837 0 11.3662 0 10.8739V3.10002C0 2.60775 0.171379 2.19023 0.514137 1.84747C0.856895 1.50471 1.27441 1.33333 1.76669 1.33333H3.58407L4.94929 0H9.02466L10.3899 1.33333H12.2073C12.6995 1.33333 13.1171 1.50471 13.4598 1.84747C13.8026 2.19023 13.9739 2.60775 13.9739 3.10002V10.8739C13.9739 11.3662 13.8026 11.7837 13.4598 12.1265C13.1171 12.4692 12.6995 12.6406 12.2073 12.6406H1.76669V12.6406M1.76669 10.8739H12.2073V10.8739V10.8739V3.10002V3.10002V3.10002H9.64857L8.32827 1.76669H5.67393L4.29711 3.10002H1.76669V3.10002V3.10002V10.8739V10.8739V10.8739V10.8739M6.98697 6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697V6.98697"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export function Recorder({
   className,
   ...props
 }: {
   className?: string;
-  props: React.SVGProps<SVGSVGElement>;
+  props?: React.SVGProps<SVGSVGElement>;
 }) {
   return (
     <svg
@@ -463,7 +512,7 @@ export function Google({
       className={className}
       {...props}
     >
-      <g clip-path="url(#clip0_13_1521)">
+      <g clipPath="url(#clip0_13_1521)">
         <path
           d="M23.7663 12.2764C23.7663 11.4606 23.7001 10.6405 23.559 9.83801H12.2402V14.459H18.722C18.453 15.9493 17.5888 17.2677 16.3233 18.1055V21.1039H20.1903C22.4611 19.0138 23.7663 15.9273 23.7663 12.2764Z"
           fill="#4285F4"

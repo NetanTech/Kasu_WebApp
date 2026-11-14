@@ -1,134 +1,165 @@
 "use client";
-import { ArrowRight2, Lock } from "@/app/components/svgs/svg";
-import Button from "@/app/components/ui/Button";
-import TextField from "@/app/components/ui/Textfield";
-import React, { useState } from "react";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "motion/react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  FormProvider,
+  useForm,
+  type FieldPath,
+} from "react-hook-form";
+import {
+  onboardingSchema,
+  type OnboardingValues,
+} from "@/app/lib/utils/zodOnboardingSchema";
 import FirstStep from "./components/FirstStep";
+import OnboardingFooter from "./components/OnboardingFooter";
 import SecondStep from "./components/SecondStep";
+import StepHeader from "./components/StepHeader";
+import SuccessStep from "./components/SuccessStep";
+import ThirdStep from "./components/ThirdStep";
+import type { OnboardingStep } from "./types";
 
-const steps = [
-  {
-    title: "About your business",
-    headline: "Tell us about your business",
-    description:
-      "This helps KASU understand your records and organize your daily sales properly.",
-  },
-  {
-    title: "Your records & cash flow",
-    headline: "How do you keep records today?",
-    description:
-      "Pick everything that applies. KASU works with all of them seamlessly.",
-  },
-  {
-    title: "Your first record",
-    headline: "Complete your profile",
-    description: "Start with whatever is easiest. You can add more anytime.",
-  },
-];
-
-const businessList: string[] = [
-  "Shop or retail",
-  "Food and restaurant",
-  "Fashion & tailoring",
-  "Beauty & barbing",
-  "Services",
-  "Wholesale or distribution",
-  "Other",
-];
-
-const numberofWorkers: string[] = ["1 to 5", "6 to 20", "21 to 50", "50+"];
-
-export const Tick = () => {
-  return (
-    <svg
-      width="11"
-      height="9"
-      viewBox="0 0 11 9"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M3.8 8.01667L0 4.21667L0.95 3.26667L3.8 6.11667L9.91667 0L10.8667 0.95L3.8 8.01667V8.01667"
-        fill="white"
-      />
-    </svg>
-  );
+const DEFAULT_VALUES: OnboardingValues = {
+  businessName: "",
+  businessTypes: [],
+  location: "",
+  teamSize: "1 to 5",
+  recordMethods: [],
+  separateMoney: "sometimes",
+  preference: "",
 };
 
+const STEP_FIELDS: Record<
+  OnboardingStep,
+  FieldPath<OnboardingValues>[]
+> = {
+  1: ["businessName", "businessTypes", "location", "teamSize"],
+  2: ["recordMethods", "separateMoney"],
+  3: ["preference"],
+};
+
+const STEP_X = 16;
+
 const Page = () => {
-  const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
-  const [teamSize, setTeamSize] = useState<string>(numberofWorkers[0]);
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<OnboardingStep>(1);
+  const [direction, setDirection] = useState<-1 | 0 | 1>(0);
+  const [finished, setFinished] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const previousStep = useRef<OnboardingStep>(step);
+
+  const form = useForm<OnboardingValues>({
+    resolver: zodResolver(onboardingSchema),
+    mode: "onTouched",
+    defaultValues: DEFAULT_VALUES,
+  });
+
+  useEffect(() => {
+    if (previousStep.current === step) return;
+
+    previousStep.current = step;
+    scrollRef.current?.scrollTo({ top: 0 });
+    headingRef.current?.focus({ preventScroll: true });
+  }, [step]);
+
+  const goToStep = (next: OnboardingStep) => {
+    setDirection(next > step ? 1 : -1);
+    setStep(next);
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const isValid = await form.trigger(STEP_FIELDS[step]);
+
+    if (!isValid) {
+      setAttempt((count) => count + 1);
+
+      window.setTimeout(() => {
+        const firstInvalidField = scrollRef.current?.querySelector<HTMLElement>(
+          '[aria-invalid="true"], [data-invalid="true"]',
+        );
+
+        if (!firstInvalidField) return;
+
+        firstInvalidField.focus();
+
+        const describedBy =
+          firstInvalidField.getAttribute("aria-describedby") ?? "";
+        const errorMessage = describedBy
+          .split(/\s+/)
+          .map((id) => document.getElementById(id))
+          .find((element) => element?.getAttribute("role") === "alert");
+
+        (errorMessage ?? firstInvalidField).scrollIntoView({
+          block: "center",
+        });
+      }, 0);
+      return;
+    }
+
+    if (step === 3) {
+      setFinished(true);
+      return;
+    }
+
+    goToStep((step + 1) as OnboardingStep);
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      goToStep((step - 1) as OnboardingStep);
+    }
+  };
+
+  if (finished) {
+    return (
+      <SuccessStep businessName={form.getValues("businessName").trim()} />
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-8 w-full">
-      {/* Step One */}
-      <div className="flex flex-col gap-8">
-        {/* Header area */}
-        <div className="flex flex-col gap-6">
-          {/* Step indicator */}
-          <div className="flex flex-col gap-2">
-            {/* Title + main title */}
-            <div className="flex items-center justify-between">
-              <p className="uppercase text-blue-500 text-[11px] leading-3.25 tracking-[0.06px] font-semibold ">
-                Step {step} of 3
-              </p>
+    <FormProvider {...form}>
+      <form
+        noValidate
+        onSubmit={handleSubmit}
+        className="flex h-full flex-col"
+      >
+        <div
+          ref={scrollRef}
+          className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-10 md:px-8 lg:px-21.25 lg:py-24.5"
+        >
+          <div className="mx-auto flex w-full max-w-267.5 flex-col gap-8">
+            <StepHeader step={step} headingRef={headingRef} />
 
-              <p className="text-[12px] leading-4 text-grey-900">
-                {steps[step - 1].title}
-              </p>
-            </div>
-
-            {/* Progress bar */}
-            <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-blue-100">
-              <div
-                className="h-full rounded-full bg-blue-500 transition-all duration-300 ease-in-out"
-                style={{ width: `${(step / 3) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <h5 className="font-medium text-black">
-              {steps[step - 1].headline}
-            </h5>
-            <p className="body-small-regular text-grey-300">
-              {steps[step - 1].description}
-            </p>
+            <motion.div
+              key={step}
+              initial={
+                direction === 0
+                  ? { opacity: 0, y: 8 }
+                  : { opacity: 0, x: direction * STEP_X }
+              }
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col gap-8"
+            >
+              {step === 1 && <FirstStep shakeKey={attempt} />}
+              {step === 2 && <SecondStep />}
+              {step === 3 && <ThirdStep />}
+            </motion.div>
           </div>
         </div>
 
-        { step === 1 && <FirstStep /> }
-        { step === 2 && <SecondStep /> }
-      </div>
-
-      <div className="flex items-center w-full justify-between  gap-2">
-        <button
-          className="text-grey-300 px-3 rounded-sm py-2 md:px-4 body-small-medium"
-          onClick={() =>
-            setStep((p) => {
-              if (p === 3) return 2;
-              if (p === 2) return 1;
-              return 1;
-            })
-          }
-        >
-          Back
-        </button>
-
-        <Button
-          variant="primary"
-          size="sm"
-          trailingIcon={<ArrowRight2 className="text-white" />}
-          onClick={() => setStep((p) => {
-            if (p === 1) return 2;
-            if (p === 2) return 3;
-            return 3
-          })}
-        >
-          Continue
-        </Button>
-      </div>
-    </div>
+        <OnboardingFooter
+          step={step}
+          onBack={handleBack}
+          onSkip={() => setFinished(true)}
+        />
+      </form>
+    </FormProvider>
   );
 };
 
